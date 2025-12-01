@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,18 @@
     <style>
         /* --- Cài đặt Biến CSS --- */
         :root {
-            --bg-level-easy: url('https://images.unsplash.com/photo-1549419137-97554e17929d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* Thư viện Cổ điển */
-            --bg-level-normal: url('https://images.unsplash.com/photo-1549635076-2e8623788775?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* Hiện đại, Trắng */
-            --bg-level-hard: url('https://images.unsplash.com/photo-1577717903265-ec1642c8c11e?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* Tối, Thử thách */
+            --bg-level-easy: url('https://images.unsplash.com/photo-1549419137-97554e17929d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            /* Thư viện Cổ điển */
+            --bg-level-normal: url('https://images.unsplash.com/photo-1549635076-2e8623788775?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            /* Hiện đại, Trắng */
+            --bg-level-hard: url('https://images.unsplash.com/photo-1577717903265-ec1642c8c11e?q=80&w=2835&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            /* Tối, Thử thách */
             --bg-current: var(--bg-level-easy);
-            
-            /* Đường dẫn hình ảnh Rương Báu (Lưu ý: đây là URL ví dụ, có thể cần thay thế bằng ảnh ổn định hơn) */
-            --treasure-chest-image: url('https://i.imgur.com/8QzXy2A.png'); 
+
+            /* Đường dẫn hình ảnh BÌA BÍ ẨN (Khung ảnh user cung cấp) */
+            --mystery-cover-image: url('C:\Users\AL\Downloads\Art Hunter Game\IMG\khungtranhanhbangdongvang1.jpg');
+            --mystery-question-mark: '❓';
+            /* Biểu tượng dấu hỏi */
         }
 
         body {
@@ -38,8 +44,9 @@
             position: relative;
             background-image: var(--bg-current);
             background-size: cover;
+            /* Ảnh nền hiện rõ hơn */
             background-blend-mode: multiply;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.5); 
         }
 
         /* --- Thanh Trạng thái --- */
@@ -57,9 +64,17 @@
             border-radius: 5px;
         }
 
-        #score { color: #ffd700; } 
-        #timer { color: #ff6347; } 
-        #level-display { color: #00bfff; } 
+        #score {
+            color: #ffd700;
+        }
+
+        #timer {
+            color: #ff6347;
+        }
+
+        #level-display {
+            color: #00bfff;
+        }
 
         /* --- Căn Phòng Bảo vật --- */
         #vault-room {
@@ -84,9 +99,9 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            pointer-events: none; 
+            pointer-events: none;
         }
-        
+
         #game-container.started .artifact {
             pointer-events: auto;
         }
@@ -96,20 +111,24 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
         }
 
+        /* MỚI: Ẩn ảnh, tên và giá trị mặc định */
         .artifact-image-container {
             width: 80%;
-            height: 80px; 
+            height: 80px;
             margin: 5px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; 
+            overflow: hidden;
+            opacity: 0;
+            /* Ẩn ảnh mặc định */
+            transition: opacity 0.3s;
         }
-        
+
         .artifact-image-container img {
             max-width: 100%;
             max-height: 100%;
-            object-fit: contain; 
+            object-fit: contain;
             border-radius: 5px;
         }
 
@@ -117,46 +136,77 @@
             font-weight: bold;
             font-size: 1.1em;
             margin-top: 5px;
+            opacity: 0;
+            /* Ẩn tên mặc định */
+            transition: opacity 0.3s;
+            z-index: 10;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            border-radius: 3px;
         }
 
         .artifact-value {
             color: #ffd700;
             font-size: 0.9em;
+            opacity: 0;
+            /* Ẩn giá trị mặc định */
+            transition: opacity 0.3s;
+            z-index: 10;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            border-radius: 3px;
         }
 
-        /* Rương Báu (Chưa bị lấy trộm) - Sử dụng hình ảnh background */
+        /* BÌA BÍ ẨN (Chưa bị lấy trộm) - Sử dụng hình ảnh khung vàng và dấu hỏi */
         .artifact::before {
-            content: ''; /* Xóa nội dung văn bản */
+            content: var(--mystery-question-mark);
+            /* Hiện dấu hỏi */
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            background-image: var(--treasure-chest-image);
-            background-size: 60%; /* Kích thước rương */
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Nền mờ */
+            background-image: var(--mystery-cover-image);
+            /* Hình ảnh khung ảnh */
+            background-size: 100% 100%;
+            /* Phủ kín để thấy khung */
             background-position: center;
             background-repeat: no-repeat;
             transition: opacity 0.3s;
             z-index: 5;
-            pointer-events: none; 
+            pointer-events: none;
             border-radius: 8px;
-        }
-
-        .artifact.stolen::before {
-            content: '💎'; /* Hiện Kim cương khi đã trộm */
-            background-image: none; /* Xóa hình ảnh rương */
-            background-color: rgba(0, 0, 0, 0.7); /* Nền mờ cho chiến lợi phẩm */
-            font-size: 3em;
+            /* Style cho dấu hỏi */
+            font-size: 5em;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
-            opacity: 1; /* Đảm bảo biểu tượng kim cương hiện lên */
+            text-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+            /* Hiệu ứng phát sáng */
         }
-        
+
+        /* Khi đã trộm: Ẩn lớp phủ BÍ ẨN để hiển thị báu vật thật */
+        .artifact.stolen::before {
+            opacity: 0 !important;
+            /* Ẩn hoàn toàn lớp phủ bí ẩn */
+            content: none;
+        }
+
+        /* Hiển thị ảnh, tên và giá trị khi stolen */
+        .artifact.stolen .artifact-image-container,
+        .artifact.stolen .artifact-name,
+        .artifact.stolen .artifact-value {
+            opacity: 1;
+        }
+
         /* --- Modal Câu hỏi/Kết quả --- */
         .modal {
-            display: none; 
+            display: none;
             position: fixed;
             z-index: 100;
             left: 0;
@@ -179,7 +229,7 @@
             text-align: center;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.7);
         }
-        
+
         #question-text {
             font-size: 1.4em;
             margin: 20px 0;
@@ -204,8 +254,13 @@
             text-align: center;
         }
 
-        .correct { background-color: #4CAF50 !important; }
-        .incorrect { background-color: #f44336 !important; }
+        .correct {
+            background-color: #4CAF50 !important;
+        }
+
+        .incorrect {
+            background-color: #f44336 !important;
+        }
 
         #feedback {
             margin-top: 20px;
@@ -231,28 +286,39 @@
             opacity: 1;
             transition: opacity 0.5s;
         }
-        
+
         .start-overlay-hidden {
             opacity: 0 !important;
-            pointer-events: none !important; 
+            pointer-events: none !important;
         }
 
         /* --- Tiêu đề Game "The Art Hunter" --- */
         #game-title {
-            font-family: 'Times New Roman', serif; /* Font chữ cơ bản giống ảnh */
-            font-size: 3.5em; /* Kích thước lớn */
+            font-family: 'Times New Roman', serif;
+            /* Font chữ cơ bản giống ảnh */
+            font-size: 3.5em;
+            /* Kích thước lớn */
             font-weight: bold;
-            color: #E6D2B3; /* Màu vàng kem nhẹ */
-            text-shadow: 
-                -2px -2px 0 #4A3A2D,  /* Shadow đậm phía trên trái */
-                2px -2px 0 #4A3A2D,   /* Shadow đậm phía trên phải */
-                -2px 2px 0 #4A3A2D,   /* Shadow đậm phía dưới trái */
-                2px 2px 0 #4A3A2D,    /* Shadow đậm phía dưới phải */
-                0 0 10px rgba(255, 255, 255, 0.5); /* Ánh sáng nhẹ */
-            letter-spacing: 2px; /* Khoảng cách chữ */
-            margin-bottom: 30px; /* Khoảng cách với dòng dưới */
+            color: #E6D2B3;
+            /* Màu vàng kem nhẹ */
+            text-shadow:
+                -2px -2px 0 #4A3A2D,
+                /* Shadow đậm phía trên trái */
+                2px -2px 0 #4A3A2D,
+                /* Shadow đậm phía trên phải */
+                -2px 2px 0 #4A3A2D,
+                /* Shadow đậm phía dưới trái */
+                2px 2px 0 #4A3A2D,
+                /* Shadow đậm phía dưới phải */
+                0 0 10px rgba(255, 255, 255, 0.5);
+            /* Ánh sáng nhẹ */
+            letter-spacing: 2px;
+            /* Khoảng cách chữ */
+            margin-bottom: 30px;
+            /* Khoảng cách với dòng dưới */
             padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.3); /* Nền mờ cho tiêu đề */
+            background: rgba(0, 0, 0, 0.3);
+            /* Nền mờ cho tiêu đề */
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -274,10 +340,18 @@
             transition: transform 0.1s;
         }
 
-        #easy-btn { background-color: #4CAF50; } 
-        #normal-btn { background-color: #ff9800; } 
-        #hard-btn { background-color: #f44336; } 
-        
+        #easy-btn {
+            background-color: #4CAF50;
+        }
+
+        #normal-btn {
+            background-color: #ff9800;
+        }
+
+        #hard-btn {
+            background-color: #f44336;
+        }
+
         .level-select-btn:hover {
             transform: scale(1.05);
         }
@@ -287,6 +361,7 @@
             font-size: 1.8em;
             color: #ffd700;
         }
+
         #start-details {
             font-size: 1.1em;
             color: #ccc;
@@ -294,17 +369,23 @@
         }
     </style>
 </head>
+
 <body>
+    <audio id="background-music" loop preload="auto">
+        <source src="C:\Users\AL\Downloads\Art Hunter Game\AUDIO\Arena of Valor  Skin Music  Yorn x Detective Conan  Original Game Soundtrack.mp3" type="audio/mpeg">
+        Trình duyệt của bạn không hỗ trợ phần tử audio.
+    </audio>
+
     <div id="game-container">
-        
+
         <div id="start-overlay">
-            <h1 id="game-title">THE ART HUNTER</h1> 
-            <h2 id="start-message">CHỌN TẦNG THỬ THÁCH, QUÂN VƯƠNG!</h2>
+            <h1 id="game-title">THE ART HUNTER</h1>
+            <h2 id="start-message">CHỌN TẦNG, SIÊU TRỘM!</h2>
             <p id="start-details">Chọn mức độ để xác định thời gian và giá trị bảo vật. Chúc may mắn!</p>
             <div id="level-selection-buttons">
                 <button id="easy-btn" class="level-select-btn" data-level="easy">TẦNG DỄ (3:00)</button>
-                <button id="normal-btn" class="level-select-btn" data-level="normal">TẦNG BÌNH THƯỜNG (2:30)</button>
-                <button id="hard-btn" class="level-select-btn" data-level="hard">TẦNG KHÓ (2:00)</button>
+                <button id="normal-btn" class="level-select-btn" data-level="normal">TẦNG BÌNH THƯỜNG (2:00)</button>
+                <button id="hard-btn" class="level-select-btn" data-level="hard">TẦNG KHÓ (1:00)</button>
             </div>
         </div>
 
@@ -315,7 +396,7 @@
         </div>
 
         <div id="vault-room">
-            </div>
+        </div>
 
         <div id="question-modal" class="modal">
             <div class="modal-content">
@@ -323,7 +404,9 @@
                 <p id="question-text"></p>
                 <div id="answers-container"></div>
                 <div id="feedback"></div>
-                <button id="restart-button" style="display:none; margin-top: 20px; padding: 10px 20px; background-color: #00bfff; color: white; border: none; border-radius: 5px; cursor: pointer;" onclick="window.location.reload()">Thử Lại</button>
+                <button id="restart-button"
+                    style="display:none; margin-top: 20px; padding: 10px 20px; background-color: #00bfff; color: white; border: none; border-radius: 5px; cursor: pointer;"
+                    onclick="window.location.reload()">Thử Lại</button>
             </div>
         </div>
     </div>
@@ -332,52 +415,85 @@
         // --- Dữ liệu Bảo vật và Câu hỏi cho 3 Tầng ---
 
         const BASE_ARTIFACTS = [
-            { name: "Mona Lisa", baseValue: 1000000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg" },
-            { name: "The Scream", baseValue: 800000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/The_Scream.jpg/800px-The_Scream.jpg" },
-            { name: "The Thinker", baseValue: 550000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/The_Thinker_-_Auguste_Rodin.jpg/800px-The_Thinker_-_Auguste_Rodin.jpg" },
-            { name: "Faberge Egg", baseValue: 450000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Imperial_Coronation_Egg_-_Faberg%C3%A9_-_1897.jpg/800px-Imperial_Coronation_Egg_-_Faberg%C3%A9_-_1897.jpg" },
-            { name: "The Kiss (Klimt)", baseValue: 600000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg/800px-The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg" },
-            { name: "Statue of David", baseValue: 1050000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Michelangelo%27s_David_-_right_view_detail.jpg/800px-Michelangelo%27s_David_-_right_view_detail.jpg" },
-            { name: "Sunstone", baseValue: 400000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Museo_del_Templo_Mayor%2C_Piedra_del_Sol%2C_M%C3%A9xico_DF.JPG/800px-Museo_del_Templo_Mayor%2C_Piedra_del_Sol%2C_M%C3%A9xico_DF.JPG" },
-            { name: "Venus de Milo", baseValue: 950000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Venus_de_Milo_Louvre_MR325_n2.jpg/800px-Venus_de_Milo_Louvre_MR325_n2.jpg" },
-            { name: "Code of Hammurabi", baseValue: 700000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Code-de-Hammurabi-Detail-02.jpg/800px-Code-de-Hammurabi-Detail-02.jpg" },
-            { name: "Rosetta Stone", baseValue: 650000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Rosetta_Stone_BW.jpg/800px-Rosetta_Stone_BW.jpg" },
-            { name: "Star of India", baseValue: 500000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Star_of_India_%28gem%29.jpg/800px-Star_of_India_%28gem%29.jpg" },
-            { name: "Crown Jewels", baseValue: 1200000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Imperial_State_Crown_%282012%29.jpg/800px-Imperial_State_Crown_%282012%29.jpg" },
-            { name: "Terra Cotta Army", baseValue: 1100000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Terra_Cotta_Army_General.jpg/800px-Terra_Cotta_Army_General.jpg" },
-            { name: "Mask of Tutankhamun", baseValue: 900000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Tutankhamun%27s_mask.jpg/800px-Tutankhamun%27s_mask.jpg" },
-            { name: "The Last Supper", baseValue: 850000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Leonardo_da_Vinci_-_The_Last_Supper_-_c._1495-1498_cropped.jpg/800px-Leonardo_da_Vinci_-_The_Last_Supper_-_c._1495-1498_cropped.jpg" },
-            { name: "Magna Carta", baseValue: 980000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Magna_Carta_%28British_Library_Cotton_MS_Augustus_II.106%29.jpg/800px-Magna_Carta_%28British_Library_Cotton_MS_Augustus_II.106%29.jpg" },
-            { name: "Bust of Nefertiti", baseValue: 750000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Nofretete_Neues_Museum.jpg/800px-Nofretete_Neues_Museum.jpg" },
-            { name: "The Book of Kells", baseValue: 780000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Book_of_Kells_fol_27v_incipit_John.jpg/800px-Book_of_Kells_fol_27v_incipit_John.jpg" },
-            { name: "Great Mogul Diamond", baseValue: 1300000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Great_Mogul_Diamond.png/440px-Great_Mogul_Diamond.png" },
-            { name: "Palace of Knossos Fresco", baseValue: 680000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Toreador_Fresco_Knossos.jpg/800px-Toreador_Fresco_Knossos.jpg" },
-            { name: "Hope Diamond", baseValue: 1500000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Hope_Diamond_%2828.1.09%29.jpg/800px-Hope_Diamond_%2828.1.09%29.jpg" },
-            { name: "Sistine Chapel Art", baseValue: 1400000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Michelangelo%27s_Creation_of_Adam.jpg/800px-Michelangelo%27s_Creation_of_Adam.jpg" },
-            { name: "Apollo 11 Command Module", baseValue: 2000000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Apollo_11_Command_Module_Columbia.jpg/800px-Apollo_11_Command_Module_Columbia.jpg" },
-            { name: "Declaration of Independence", baseValue: 1800000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Declaration_of_Independence_%281819_print%29.jpg/800px-Declaration_of_Independence_%281819_print%29.jpg" },
-            { name: "Diamond Jubilee Crown", baseValue: 1600000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Diamond_Jubilee_Crown_Lizzie_and_the_Duke_of_Edinburgh.jpg/800px-Diamond_Jubilee_Crown_Lizzie_and_the_Duke_of_Edinburgh.jpg" },
-            { name: "Starry Night (Van Gogh)", baseValue: 1700000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/800px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" },
-            { name: "Viking Ship Oseberg", baseValue: 1350000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Osebergskipet_Historisk_Museum.jpg/800px-Osebergskipet_Historisk_Museum.jpg" },
-            { name: "Bayeux Tapestry", baseValue: 1250000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Bayeux_Tapestry_scene4.jpg/800px-Bayeux_Tapestry_scene4.jpg" },
-            { name: "Mask of Agamemnon", baseValue: 1150000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Mask_of_Agamemnon_NMA_Athens.jpg/800px-Mask_of_Agamemnon_NMA_Athens.jpg" },
-            { name: "Peacock Throne Replica", baseValue: 1900000, imagePath: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Peacock_Throne_reconstruction_at_Red_Fort_museum_in_Delhi.jpg/800px-Peacock_Throne_reconstruction_at_Red_Fort_museum_in_Delhi.jpg" },
-        ];
+            // Tầng Dễ (20 items - Indices 0-19)
+            { name: "Mona Lisa", baseValue: 1000000, imagePath: "https://i.imgur.com/k6lPqHq.png" },
+            { name: "The Scream", baseValue: 800000, imagePath: "https://i.imgur.com/vH9jG7t.png" },
+            { name: "The Thinker", baseValue: 550000, imagePath: "https://i.imgur.com/Q21HqJ0.png" },
+            { name: "Faberge Egg", baseValue: 450000, imagePath: "https://i.imgur.com/5V3xXyZ.png" },
+            { name: "The Kiss (Klimt)", baseValue: 600000, imagePath: "https://i.imgur.com/5uD6c0y.png" },
+            { name: "Statue of David", baseValue: 1050000, imagePath: "https://i.imgur.com/L7sVb4F.png" },
+            { name: "Sunstone", baseValue: 400000, imagePath: "https://i.imgur.com/8Nn3K4X.png" },
+            { name: "Venus de Milo", baseValue: 950000, imagePath: "https://i.imgur.com/9nJk0Lw.png" },
+            { name: "Code of Hammurabi", baseValue: 700000, imagePath: "https://i.imgur.com/1B7H0wV.png" },
+            { name: "Rosetta Stone", baseValue: 650000, imagePath: "https://i.imgur.com/r6O0G5E.png" },
+            // THÊM 10 BẢO VẬT CHO TẦNG DỄ
+            { name: "The Night Watch", baseValue: 500000, imagePath: "https://i.imgur.com/GjT4hNn.png" },
+            { name: "Parthenon Sculpture", baseValue: 700000, imagePath: "https://i.imgur.com/xT5qYwK.png" },
+            { name: "Neptune Statue", baseValue: 350000, imagePath: "https://i.imgur.com/4hN1yQn.png" },
+            { name: "Ancient Greek Vase", baseValue: 250000, imagePath: "https://i.imgur.com/W2x0Q9X.png" },
+            { name: "Coptic Textile", baseValue: 300000, imagePath: "https://i.imgur.com/0vT2g8v.png" },
+            { name: "The Birth of Venus", baseValue: 620000, imagePath: "https://i.imgur.com/7sA6D1u.png" },
+            { name: "The Last Judgment", baseValue: 880000, imagePath: "https://i.imgur.com/L7sVb4F.png" },
+            { name: "Bronze Buddha Statue", baseValue: 410000, imagePath: "https://i.imgur.com/M6xZ8rA.png" },
+            { name: "Roman Coin Collection", baseValue: 330000, imagePath: "https://i.imgur.com/vH9jG7t.png" },
+            { name: "Hieroglyphic Tablet", baseValue: 520000, imagePath: "https://i.imgur.com/r6O0G5E.png" },
 
+            // Tầng Bình thường (15 items - Indices 20-34)
+            { name: "Star of India", baseValue: 500000, imagePath: "https://i.imgur.com/hT1qJ6Q.png" }, // index 20 (bắt đầu Normal)
+            { name: "Crown Jewels", baseValue: 1200000, imagePath: "https://i.imgur.com/HlJ2t3F.png" },
+            { name: "Terra Cotta Army", baseValue: 1100000, imagePath: "https://i.imgur.com/vW7jK8C.png" },
+            { name: "Mask of Tutankhamun", baseValue: 900000, imagePath: "https://i.imgur.com/XwE4GzK.png" },
+            { name: "The Last Supper", baseValue: 850000, imagePath: "https://i.imgur.com/fL4PqR0.png" },
+            { name: "Magna Carta", baseValue: 980000, imagePath: "https://i.imgur.com/G5qWJ4p.png" },
+            { name: "Bust of Nefertiti", baseValue: 750000, imagePath: "https://i.imgur.com/N7b0D9j.png" },
+            { name: "The Book of Kells", baseValue: 780000, imagePath: "https://i.imgur.com/S1L6pYt.png" },
+            { name: "Great Mogul Diamond", baseValue: 1300000, imagePath: "https://i.imgur.com/A6jZk9x.png" },
+            { name: "Palace of Knossos Fresco", baseValue: 680000, imagePath: "https://i.imgur.com/R0iV5fA.png" },
+            // THÊM 5 BẢO VẬT CHO TẦNG BÌNH THƯỜNG
+            { name: "Imperial Jade Seal", baseValue: 1150000, imagePath: "https://i.imgur.com/G5qWJ4p.png" },
+            { name: "Scythian Gold Stag", baseValue: 820000, imagePath: "https://i.imgur.com/9nJk0Lw.png" },
+            { name: "Discus Thrower Statue", baseValue: 930000, imagePath: "https://i.imgur.com/Q21HqJ0.png" },
+            { name: "Gutenberg Bible", baseValue: 1020000, imagePath: "https://i.imgur.com/3pQ0yA5.png" },
+            { name: "Samurai Armor Set", baseValue: 720000, imagePath: "https://i.imgur.com/vW7jK8C.png" }, // index 34 (kết thúc Normal)
+
+            // Tầng Khó (10 items - Indices 35-44)
+            { name: "Hope Diamond", baseValue: 1500000, imagePath: "https://i.imgur.com/yD8vP3K.png" }, // index 35 (bắt đầu Hard)
+            { name: "Sistine Chapel Art", baseValue: 1400000, imagePath: "https://i.imgur.com/h2GjVzY.png" },
+            { name: "Apollo 11 Command Module", baseValue: 2000000, imagePath: "https://i.imgur.com/T0tB0uG.png" },
+            { name: "Declaration of Independence", baseValue: 1800000, imagePath: "https://i.imgur.com/3pQ0yA5.png" },
+            { name: "Diamond Jubilee Crown", baseValue: 1600000, imagePath: "https://i.imgur.com/9C8L2M7.png" },
+            { name: "Starry Night (Van Gogh)", baseValue: 1700000, imagePath: "https://i.imgur.com/D4sT9Yw.png" },
+            { name: "Viking Ship Oseberg", baseValue: 1350000, imagePath: "https://i.imgur.com/B7yPqLh.png" },
+            { name: "Bayeux Tapestry", baseValue: 1250000, imagePath: "https://i.imgur.com/Q3jH4I0.png" },
+            { name: "Mask of Agamemnon", baseValue: 1150000, imagePath: "https://i.imgur.com/M6xZ8rA.png" },
+            { name: "Peacock Throne Replica", baseValue: 1900000, imagePath: "https://i.imgur.com/N5oG7V0.png" }, // index 44 (kết thúc Hard)
+        ];
         const BASE_QUESTIONS = [
-            // Dễ - 10 câu (Câu hỏi Tiếng Anh cơ bản)
+            // Dễ - 20 câu (Indices 0-19)
             { question: "What is the past tense of 'to lead'?", answers: ["leaded", "led", "leed", "ladden"], correct: "led" },
             { question: "Which word is a synonym for 'ubiquitous'?", answers: ["rare", "scarce", "omnipresent", "limited"], correct: "omnipresent" },
             { question: "Complete the idiom: 'Bite the ___ that feeds you.'", answers: ["hand", "apple", "finger", "tongue"], correct: "hand" },
-            { question: "Which of these words is a conjunction?", answers: ["quickly", "between", "although", "running"], correct: "although" },
+            { question: "Which word is a conjunction?", answers: ["quickly", "between", "although", "running"], correct: "although" },
             { question: "What is the meaning of 'Ephemeral'?", answers: ["permanent", "long-lasting", "lasting for a very short time", "eternal"], correct: "lasting for a very short time" },
             { question: "The plural of 'cactus' can be 'cactuses' or...", answers: ["cacti", "cactus", "cactusi", "cact"], correct: "cacti" },
             { question: "Identify the misspelled word:", answers: ["recieve", "believe", "achieve", "ceiling"], correct: "recieve" },
             { question: "What is the adjective form of 'courage'?", answers: ["courageous", "couraging", "couragely", "courageful"], correct: "courageous" },
             { question: "The phrase 'A dime a dozen' means:", answers: ["very expensive", "very rare", "very common and of little value", "worth exactly ten cents"], correct: "very common and of little value" },
             { question: "Which sentence uses the passive voice?", answers: ["She opened the door.", "The cake was baked by her.", "He is singing a song.", "They watched the movie."], correct: "The cake was baked by her." },
-            // Bình thường - 10 câu (Từ vựng/Ngữ pháp trung cấp)
-            { question: "What does 'negligent' mean?", answers: ["Careful", "Diligent", "Failing to take proper care", "Hardworking"], correct: "Failing to take proper care" },
+            // THÊM 10 CÂU HỎI CHO TẦNG DỄ
+            { question: "What is the synonym for 'elucidate'?", answers: ["confuse", "explain", "obfuscate", "question"], correct: "explain" },
+            { question: "Which is the correct possessive form?", answers: ["childrens' toys", "children's toys", "childs' toys", "childrens toys"], correct: "children's toys" },
+            { question: "The word 'read' is a homograph of 'read' (past tense) but has a different...", answers: ["spelling", "meaning", "pronunciation", "root"], correct: "pronunciation" },
+            { question: "Which word means 'extreme happiness'?", answers: ["misery", "euphoria", "sadness", "apathy"], correct: "euphoria" },
+            { question: "Choose the correct phrase: 'If I ___ you, I would take the offer.'", answers: ["was", "would be", "were", "am"], correct: "were" },
+            { question: "What is the opposite of 'procrastinate'?", answers: ["delay", "wait", "act immediately", "postpone"], correct: "act immediately" },
+            { question: "Which sentence uses the present perfect tense?", answers: ["She is eating.", "She ate.", "She has eaten.", "She will eat."], correct: "She has eaten." },
+            { question: "Identify the noun in the sentence: 'The cat slept peacefully.'", answers: ["The", "cat", "slept", "peacefully"], correct: "cat" },
+            { question: "What is the meaning of 'clandestine'?", answers: ["open", "public", "secret", "famous"], correct: "secret" },
+            { question: "Which is a modal verb?", answers: ["go", "eat", "can", "run"], correct: "can" },
+
+            // Bình thường - 15 câu (Indices 20-34)
+            { question: "What does 'negligent' mean?", answers: ["Careful", "Diligent", "Failing to take proper care", "Hardworking"], correct: "Failing to take proper care" }, // index 20 (bắt đầu Normal)
             { question: "Which word is an adverb?", answers: ["Beauty", "Beautiful", "Beautifully", "Beautify"], correct: "Beautifully" },
             { question: "What is the collective noun for a group of crows?", answers: ["A flock", "A murder", "A swarm", "A herd"], correct: "A murder" },
             { question: "Choose the correct preposition: 'She is good ___ math.'", answers: ["in", "at", "for", "on"], correct: "at" },
@@ -387,8 +503,15 @@
             { question: "Which word is an antonym for 'benevolent'?", answers: ["kind", "generous", "malevolent", "friendly"], correct: "malevolent" },
             { question: "What is the verb form of the noun 'analysis'?", answers: ["analytic", "analyze", "analyzed", "analyser"], correct: "analyze" },
             { question: "Identify the pronoun in the sentence: 'They went to the park.'", answers: ["went", "park", "They", "to"], correct: "They" },
-            // Khó - 10 câu (Kiến thức tổng hợp)
-            { question: "Which ancient civilization developed the concept of zero?", answers: ["Greeks", "Romans", "Mayans", "Egyptians"], correct: "Mayans" },
+            // THÊM 5 CÂU HỎI CHO TẦNG BÌNH THƯỜNG
+            { question: "What does the phrasal verb 'call off' mean?", answers: ["to shout loudly", "to cancel", "to visit", "to postpone"], correct: "to cancel" },
+            { question: "Which word means 'showing great attention to detail'?", answers: ["careless", "meticulous", "lazy", "hasty"], correct: "meticulous" },
+            { question: "The term for 'a word formed from the initial letters of other words' is:", answers: ["acronym", "synonym", "antonym", "homonym"], correct: "acronym" },
+            { question: "Which word is a determiner?", answers: ["run", "beautiful", "the", "sleep"], correct: "the" },
+            { question: "The idiom 'Barking up the wrong tree' means:", answers: ["climbing the wrong tree", "making a correct assumption", "making a mistaken assumption", "shouting loudly"], correct: "making a mistaken assumption" }, // index 34 (kết thúc Normal)
+
+            // Tầng Khó - 10 câu (Indices 35-44)
+            { question: "Which ancient civilization developed the concept of zero?", answers: ["Greeks", "Romans", "Mayans", "Egyptians"], correct: "Mayans" }, // index 35 (bắt đầu Hard)
             { question: "In computing, what does 'RAM' stand for?", answers: ["Read Access Memory", "Random Access Module", "Random Access Memory", "Running Active Mode"], correct: "Random Access Memory" },
             { question: "What is the capital city of Australia?", answers: ["Sydney", "Melbourne", "Canberra", "Perth"], correct: "Canberra" },
             { question: "Who formulated the theory of relativity?", answers: ["Isaac Newton", "Niels Bohr", "Albert Einstein", "Galileo Galilei"], correct: "Albert Einstein" },
@@ -397,14 +520,14 @@
             { question: "What is the largest organ of the human body?", answers: ["Heart", "Liver", "Skin", "Lungs"], correct: "Skin" },
             { question: "Which country is the largest producer of coffee?", answers: ["Vietnam", "Colombia", "Ethiopia", "Brazil"], correct: "Brazil" },
             { question: "The process of a solid turning directly into a gas is called:", answers: ["Condensation", "Evaporation", "Sublimation", "Deposition"], correct: "Sublimation" },
-            { question: "What is the primary function of chlorophyll in plants?", answers: ["Respiration", "Water absorption", "Photosynthesis", "Nutrient storage"], correct: "Photosynthesis" }
+            { question: "What is the primary function of chlorophyll in plants?", answers: ["Respiration", "Water absorption", "Photosynthesis", "Nutrient storage"], correct: "Photosynthesis" } // index 44 (kết thúc Hard)
         ];
 
         // Cấu hình các Tầng chơi
         const LEVEL_CONFIG = {
-            "easy": { time: 180, multiplier: 0.8, name: "Dễ", startArtifact: 0, questionOffset: 0, bgVar: "--bg-level-easy" }, 
-            "normal": { time: 150, multiplier: 1.0, name: "Bình thường", startArtifact: 10, questionOffset: 10, bgVar: "--bg-level-normal" }, 
-            "hard": { time: 120, multiplier: 1.5, name: "Khó", startArtifact: 20, questionOffset: 20, bgVar: "--bg-level-hard" } 
+            "easy": { time: 180, multiplier: 0.8, name: "Dễ", startArtifact: 0, questionOffset: 0, bgVar: "--bg-level-easy" },
+            "normal": { time: 120, multiplier: 1.0, name: "Bình thường", startArtifact: 20, questionOffset: 20, bgVar: "--bg-level-normal" }, // Bắt đầu từ index 20 (sau 20 items Easy)
+            "hard": { time: 60, multiplier: 1.5, name: "Khó", startArtifact: 35, questionOffset: 35, bgVar: "--bg-level-hard" } // Bắt đầu từ index 35 (sau 20 Easy + 15 Normal)
         };
 
         // --- Biến Trạng thái Trò chơi ---
@@ -413,14 +536,14 @@
         let currentArtifacts = [];
         let currentQuestions = [];
         let currentScore = 0;
-        let timeLeft = 0; 
+        let timeLeft = 0;
         let gameInterval;
         let isGameRunning = false;
         let currentArtifactElement = null;
         let currentQuestion = null;
-        let timerPaused = false;
-        
+
         // --- DOM Elements ---
+        const backgroundMusic = document.getElementById('background-music'); // ELEMENT MỚI
         const gameContainer = document.getElementById('game-container');
         const startOverlay = document.getElementById('start-overlay');
         const levelSelectionButtons = document.querySelectorAll('.level-select-btn');
@@ -433,62 +556,76 @@
         const answersContainer = document.getElementById('answers-container');
         const feedback = document.getElementById('feedback');
         const restartButton = document.getElementById('restart-button');
-        
+
         // --- Event Listener cho nút Chọn Tầng ---
         levelSelectionButtons.forEach(button => {
             button.addEventListener('click', (event) => {
                 currentLevelKey = event.target.dataset.level;
                 currentLevelConfig = LEVEL_CONFIG[currentLevelKey];
+
+                // BẮT ĐẦU PHÁT NHẠC NỀN
+                backgroundMusic.volume = 0.5; // Đặt âm lượng 50%
+                backgroundMusic.play().catch(e => {
+                    // Xử lý lỗi nếu trình duyệt chặn autoplay
+                    console.log("Autoplay blocked. User needs to interact again to start music:", e);
+                });
+
                 initializeGame(currentLevelConfig);
             });
         });
 
         // --- Khởi tạo Game sau khi chọn tầng ---
         function initializeGame(config) {
-            // Lấy 10 bảo vật và 10 câu hỏi của tầng
-            currentArtifacts = BASE_ARTIFACTS.slice(config.startArtifact, config.startArtifact + 10).map(a => ({
-                ...a, 
-                value: Math.round(a.baseValue * config.multiplier), 
-                stolen: false 
+            // Xác định số lượng item cho tầng hiện tại
+            let numArtifacts;
+            if (currentLevelKey === 'easy') numArtifacts = 20;
+            else if (currentLevelKey === 'normal') numArtifacts = 15;
+            else if (currentLevelKey === 'hard') numArtifacts = 10;
+
+            // Lấy bảo vật và câu hỏi tương ứng dựa trên số lượng mới
+            currentArtifacts = BASE_ARTIFACTS.slice(config.startArtifact, config.startArtifact + numArtifacts).map(a => ({
+                ...a,
+                value: Math.round(a.baseValue * config.multiplier),
+                stolen: false
             }));
-            currentQuestions = BASE_QUESTIONS.slice(config.questionOffset, config.questionOffset + 10);
-            
+            currentQuestions = BASE_QUESTIONS.slice(config.questionOffset, config.questionOffset + numArtifacts);
+
             // Thiết lập trạng thái game
             timeLeft = config.time;
             levelDisplay.textContent = `🌟 Tầng: ${config.name}`;
             timerDisplay.textContent = `⏱️ Thời gian: ${formatTime(timeLeft)}`;
-            
+
             // Cập nhật background
             document.documentElement.style.setProperty('--bg-current', `var(${config.bgVar})`);
-            
+
             // Ẩn lớp phủ và kích hoạt chơi
             startOverlay.classList.add('start-overlay-hidden');
             gameContainer.classList.add('started');
             isGameRunning = true;
-            
+
             initializeArtifacts(currentArtifacts);
-            resumeTimer();
+            startTimer(); // Bắt đầu timer liên tục
         }
 
         // --- Khởi tạo Bảo vật trên màn hình ---
         function initializeArtifacts(artifactsData) {
             vaultRoom.innerHTML = '';
-            
+
             artifactsData.forEach((artifact, index) => {
                 const artifactDiv = document.createElement('div');
                 artifactDiv.classList.add('artifact');
                 artifactDiv.dataset.index = index;
-                
-                // Thêm hình ảnh
+
+                // Thêm hình ảnh (Bị ẩn bởi CSS mặc định, chỉ hiện khi stolen)
                 const imageContainer = document.createElement('div');
                 imageContainer.classList.add('artifact-image-container');
                 const img = document.createElement('img');
                 img.src = artifact.imagePath;
-                img.alt = artifact.name; 
+                img.alt = artifact.name;
                 imageContainer.appendChild(img);
                 artifactDiv.appendChild(imageContainer);
 
-                // Thêm tên và giá trị
+                // Thêm tên và giá trị (Bị ẩn bởi CSS mặc định, chỉ hiện khi stolen)
                 const nameDiv = document.createElement('div');
                 nameDiv.classList.add('artifact-name');
                 nameDiv.textContent = artifact.name;
@@ -500,7 +637,7 @@
                 artifactDiv.appendChild(valueDiv);
 
                 artifactDiv.addEventListener('click', () => {
-                    if (isGameRunning && !artifact.stolen && !timerPaused) {
+                    if (isGameRunning && !artifact.stolen) {
                         currentArtifactElement = artifactDiv;
                         showQuestionModal(currentQuestions);
                     }
@@ -509,16 +646,16 @@
                 vaultRoom.appendChild(artifactDiv);
             });
         }
-        
-        // --- Bắt đầu/Tiếp tục Đồng hồ ---
+
+        // --- Bắt đầu Đồng hồ (Không bao giờ ngừng lại) ---
         function startTimer() {
-            if (gameInterval) clearInterval(gameInterval); 
+            if (gameInterval) clearInterval(gameInterval);
 
             gameInterval = setInterval(() => {
-                if (!timerPaused && isGameRunning) {
+                if (isGameRunning) {
                     timeLeft--;
                     timerDisplay.textContent = `⏱️ Thời gian: ${formatTime(timeLeft)}`;
-                    
+
                     if (timeLeft <= 0) {
                         clearInterval(gameInterval);
                         endGame(false);
@@ -527,27 +664,24 @@
             }, 1000);
         }
 
-        function pauseTimer() {
-            timerPaused = true;
-        }
-        
-        function resumeTimer() {
-            timerPaused = false;
-            startTimer();
-        }
-        
-        // --- Hiển thị Modal Câu hỏi (TẠM DỪNG đồng hồ) ---
+        // --- Hiển thị Modal Câu hỏi (Đồng hồ vẫn chạy) ---
         function showQuestionModal(questions) {
-            pauseTimer(); 
-            
             const stolenArtifactsCount = currentArtifacts.filter(a => a.stolen).length;
-            const questionIndex = stolenArtifactsCount; 
+            const questionIndex = stolenArtifactsCount;
             currentQuestion = questions[questionIndex];
+
+            // Kiểm tra nếu hết câu hỏi (người chơi đã trộm hết)
+            if (!currentQuestion) {
+                closeModal(modal);
+                checkLevelCompletion();
+                return;
+            }
 
             questionText.textContent = currentQuestion.question;
             answersContainer.innerHTML = '';
             feedback.textContent = '';
-            
+            restartButton.style.display = 'none'; // Ẩn nút restart trong modal câu hỏi
+
             const shuffledAnswers = shuffleArray([...currentQuestion.answers]);
 
             shuffledAnswers.forEach(answer => {
@@ -563,53 +697,54 @@
 
         // --- Kiểm tra Đáp án ---
         function checkAnswer(selectedButton, selectedAnswer) {
+            // Vô hiệu hóa tất cả các nút để ngăn chặn nhấp chuột tiếp theo
             document.querySelectorAll('.answer-btn').forEach(btn => btn.disabled = true);
 
             if (selectedAnswer === currentQuestion.correct) {
                 selectedButton.classList.add('correct');
                 feedback.textContent = '✅ Chính xác! Rương báu đã mở khóa!';
-                setTimeout(processTheft, 1200); 
+
+                // Thời gian chờ ngắn trước khi xử lý trộm thành công
+                setTimeout(processTheft, 1200);
             } else {
                 selectedButton.classList.add('incorrect');
-                document.querySelectorAll('.answer-btn').forEach(btn => {
-                    if (btn.textContent === currentQuestion.correct) {
-                        btn.classList.add('correct');
-                    }
-                });
-                feedback.textContent = '❌ Sai rồi! Hãy nhìn đáp án đúng và thử lại ở bảo vật khác!';
+
+                feedback.textContent = '❌ Sai rồi! Hãy thử lại ở bảo vật khác.';
+
+                // Thời gian chờ lâu hơn (3 giây) để người chơi đọc thông báo thất bại
                 setTimeout(() => {
                     closeModal(modal);
-                    resumeTimer(); 
-                }, 3000); 
+                }, 3000);
             }
         }
 
         // --- Xử lý Trộm bảo vật thành công ---
         function processTheft() {
             const index = parseInt(currentArtifactElement.dataset.index);
-            const artifact = currentArtifacts[index];
+            const artifact = currentArtifacts.find(a => a.name === currentArtifacts[index].name); // Tìm lại đối tượng artifact chính xác
 
-            artifact.stolen = true;
-            currentArtifactElement.classList.add('stolen');
-            currentScore += artifact.value;
-            scoreDisplay.textContent = `💰 Giá trị: ${formatValue(currentScore)}$`;
-            
+            if (artifact) {
+                artifact.stolen = true;
+                currentArtifactElement.classList.add('stolen');
+                currentScore += artifact.value;
+                scoreDisplay.textContent = `💰 Giá trị: ${formatValue(currentScore)}$`;
+            }
+
             closeModal(modal);
-            resumeTimer(); 
             checkLevelCompletion();
         }
 
         // --- Kiểm tra hoàn thành tầng ---
         function checkLevelCompletion() {
             const stolenCount = currentArtifacts.filter(a => a.stolen).length;
-            
+
             if (stolenCount === currentArtifacts.length) {
                 isGameRunning = false;
-                pauseTimer();
+                clearInterval(gameInterval); // Đảm bảo dừng khi thắng
                 endGame(true);
             }
         }
-        
+
         // --- Đóng Modal chung ---
         function closeModal(targetModal) {
             targetModal.style.display = 'none';
@@ -619,20 +754,20 @@
         function endGame(win) {
             isGameRunning = false;
             clearInterval(gameInterval);
-            timerPaused = true; 
+            backgroundMusic.pause(); // Dừng nhạc nền khi kết thúc
             modal.style.display = 'block';
-            
-            answersContainer.innerHTML = ''; 
-            restartButton.style.display = 'block'; 
+
+            answersContainer.innerHTML = '';
+            restartButton.style.display = 'block';
 
             if (win) {
                 questionText.textContent = "HOÀN THÀNH VỤ TRỘM!";
-                answersContainer.innerHTML = `<p style="font-size: 1.5em; color: #ffd700;">Ngài đã trộm hết 10 bảo vật của Tầng ${currentLevelConfig.name}! Tổng giá trị: ${formatValue(currentScore)}$!</p>`;
-                feedback.textContent = "Không ai có thể ngăn cản Ngài!";
+                answersContainer.innerHTML = `<p style="font-size: 1.5em; color: #ffd700;">Ngươi đã trộm hết ${currentArtifacts.length} bảo vật của Tầng ${currentLevelConfig.name}! Tổng giá trị: ${formatValue(currentScore)}$!</p>`;
+                feedback.textContent = "Không ai có thể ngăn cản ngươi Siêu Trộm!";
             } else {
                 questionText.textContent = "THẤT BẠI NHIỆM VỤ!";
                 answersContainer.innerHTML = `<p style="font-size: 1.5em; color: #ffd700;">Đồng hồ báo động đã điểm! Tổng giá trị trộm được: ${formatValue(currentScore)}$</p>`;
-                feedback.textContent = "Phi vụ thất bại do hết thời gian, Quân Vương!";
+                feedback.textContent = "Phi vụ thất bại ngươi đã bị tóm, Siêu Trôm:)))!";
             }
         }
 
@@ -640,7 +775,7 @@
         function formatValue(value) {
             return value.toLocaleString('en-US');
         }
-        
+
         function formatTime(totalSeconds) {
             const minutes = Math.floor(totalSeconds / 60);
             const seconds = totalSeconds % 60;
@@ -654,9 +789,10 @@
             }
             return array;
         }
-        
+
         // --- Khởi tạo ban đầu ---
-        timerDisplay.textContent = `⏱️ Thời gian: ${formatTime(0)}`; 
+        timerDisplay.textContent = `⏱️ Thời gian: ${formatTime(0)}`;
     </script>
 </body>
+
 </html>
